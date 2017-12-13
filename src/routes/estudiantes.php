@@ -41,71 +41,75 @@ $app->get('/api/estudiantes/{No_control}', function(Request $request, Response $
         echo '{"error": {"text": '.$e->getMessage().'}';
     }
 });
+$app->get('/api/departamentos', function(Request $request, Response $response){
+  //echo "Estudiantes";
+  $sql = "select * from departamento";
+
+  try{
+    //Get DB Object
+    $db = new db();
+    //connect
+    $db = $db->connect();
+
+    $stmt = $db->query($sql);
+    $depo = $stmt->fetchAll(PDO::FETCH_OBJ);
+    $db = null;
+    echo json_encode($depo);
+  } catch(PDOException $e){
+    echo '{"error": {"text":'.$e->getMessage().'}';
+  }
+});
 // Agregar un estudiante
-$app->post('/api/estudiantes/add', function(Request $request, Response $response){
-    $nocontrol = $request->getParam('No_control');
-    $nombre = $request->getParam('nombre_estudiante');
-    $apellidop = $request->getParam('apellido_p_estudiante');
-    $apellidom = $request->getParam('apellido_m_estudiante');
-    $semestre = $request->getParam('semestre');
-    $carrera_clave = $request->getParam('clave_carrera');
-    $sql = "INSERT INTO estudiante (No_control, nombre_estudiante, apellido_p_estudiante, apellido_m_estudiante, semestre, carrera_clave) VALUES (:No_control, :nombre_estudiante, :apellido_p_estudiante, :apellido_m_estudiante, :semestre, :clave_carrera)";
+$app->post('/api/departamentos/add', function(Request $request, Response $response){
+    $clave_depa = $request->getParam('clave_depa');
+    $nombre = $request->getParam('nombre_departamento');
+    $rfc_trabajador = $request->getParam('trabajador_rfc');
+    $sql = "INSERT INTO departamento (clave_depa, nombre_departamento, trabajador_rfc) VALUES (:clave_depa, :nombre_departamento, :trabajador_rfc)";
     try{
         // Obtener el objeto DB
         $db = new db();
         // Conectar
         $db = $db->connect();
         $stmt = $db->prepare($sql);
-        $stmt->bindParam(':No_control',      $nocontrol);
-        $stmt->bindParam(':nombre_estudiante',         $nombre);
-        $stmt->bindParam(':apellido_p_estudiante',      $apellidop);
-        $stmt->bindParam(':apellido_m_estudiante',      $apellidom);
-        $stmt->bindParam(':semestre',       $semestre);
-        $stmt->bindParam(':clave_carrera',  $carrera_clave);
+        $stmt->bindParam(':clave_depa',      $clave_depa);
+        $stmt->bindParam(':nombre_departamento',         $nombre);
+        $stmt->bindParam(':trabajador_rfc',      $rfc_trabajador);
         $stmt->execute();
-        echo '{"notice": {"text": "Estudiante agregado"}';
+        echo '{"notice": {"text": "Departamento agregado"}';
     } catch(PDOException $e){
         echo '{"error": {"text": '.$e->getMessage().'}';
     }
 });
 // Actualizar estudiante
-$app->put('/api/estudiantes/update/{No_control}', function(Request $request, Response $response){
-    $nocontrol = $request->getParam('No_control');
-    $nombre = $request->getParam('nombre_estudiante');
-    $apellidop = $request->getParam('apellido_p_estudiante');
-    $apellidom = $request->getParam('apellido_m_estudiante');
-    $semestre = $request->getParam('semestre');
-    $carrera_clave = $request->getParam('clave_carrera');
-    $sql = "UPDATE estudiante SET
-                No_control               = :No_control,
-                nombre_estudiante       = :nombre_estudiante,
-                apellido_p_estudiante   = :apellido_p_estudiante,
-                apellido_m_estudiante   = :apellido_m_estudiante,
-                semestre                = :semestre,
-                clave_carrera           = :clave_carrera
-            WHERE No_control = $nocontrol";
+$app->put('/api/departamentos/update/{clave_depa}', function(Request $request, Response $response){
+    $clave_depa = $request->getParam('clave_depa');
+    $nombre = $request->getParam('nombre_departamento');
+    $rfc_trabajador = $request->getParam('trabajador_rfc');
+    $sql = "UPDATE departamento SET
+                clave_depa               = :clave_depa,
+                nombre_departamento       = :nombre_departamento,
+                trabajador_rfc   = :trabajador_rfc
+            WHERE clave_depa = '$clave_depa'";
+          //  echo $sql;
     try{
         // Obtener el objeto DB
         $db = new db();
         // Conectar
         $db = $db->connect();
         $stmt = $db->prepare($sql);
-        $stmt->bindParam(':No_control',      $nocontrol);
-        $stmt->bindParam(':nombre_estudiante',         $nombre);
-        $stmt->bindParam(':apellido_p_estudiante',      $apellidop);
-        $stmt->bindParam(':apellido_m_estudiante',      $apellidom);
-        $stmt->bindParam(':semestre',       $semestre);
-        $stmt->bindParam(':clave_carrera',  $carrera_clave);
+        $stmt->bindParam(':clave_depa',      $clave_depa);
+        $stmt->bindParam(':nombre_departamento',         $nombre);
+        $stmt->bindParam(':trabajador_rfc',      $rfc_trabajador);
         $stmt->execute();
-        echo '{"notice": {"text": "Estudiante actualizado"}';
+        echo '{"notice": {"text": "Departamento actualizado"}';
     } catch(PDOException $e){
         echo '{"error": {"text": '.$e->getMessage().'}';
     }
 });
 // Borrar estudiante
-$app->delete('/api/estudiantes/delete/{No_control}', function(Request $request, Response $response){
-    $nocontrol = $request->getAttribute('No_control');
-    $sql = "DELETE FROM estudiante WHERE No_control = $nocontrol";
+$app->delete('/api/departamentos/delete/{clave_depa}', function(Request $request, Response $response){
+    $clave_depa = $request->getAttribute('clave_depa');
+    $sql = "DELETE FROM departamento WHERE clave_depa = $clave_depa";
     try{
         // Obtener el objeto DB
         $db = new db();
@@ -114,7 +118,7 @@ $app->delete('/api/estudiantes/delete/{No_control}', function(Request $request, 
         $stmt = $db->prepare($sql);
         $stmt->execute();
         $db = null;
-        echo '{"notice": {"text": "Estudiante eliminado"}';
+        echo '{"notice": {"text": "Departamento eliminado"}';
     } catch(PDOException $e){
         echo '{"error": {"text": '.$e->getMessage().'}';
     }

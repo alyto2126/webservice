@@ -15,5 +15,6 @@
 
 //Estudiantes routes
 require '../src/routes/estudiantes.php';
+//require '../src/routes/instructores.php';
 
 	$app->run();
